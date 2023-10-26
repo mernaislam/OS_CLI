@@ -1,4 +1,4 @@
-package OS_Linux.src;
+//package OS_Linux.src;
 
 import java.util.Scanner;
 
@@ -18,7 +18,7 @@ class Parser{
             String[] temp = input.split(" "); // split the command by space
             commandName = temp[0]; // the first word is the command name
             args = new String[temp.length-1]; // the remaining words are the arguments
-            for(int i=1;i<temp.length;i++){
+            for(int i = 1; i < temp.length; i++){
                 args[i-1] = temp[i];
             }
         }
@@ -35,8 +35,13 @@ class Parser{
 
 public class Terminal{
     Parser parser;
+    String path;
     public Terminal(){
         parser = new Parser();
+        path = System.getProperty("user.dir");
+    }
+    public String getPath(){
+        return path;
     }
     public void echo(String[] args){ // echo command in linux prints the arguments
         for(int i=0;i<args.length;i++){
@@ -44,29 +49,33 @@ public class Terminal{
         }
         System.out.println();
     }
+    //This method will choose the suitable command method to be called
+    public static void chooseCommandAction(String input){
+        Parser parser = new Parser();
+        if(parser.parse(input)){ // if the command is valid
+            String commandName = parser.getCommandName();
+            String[] arguments = parser.getArgs();
+            if(commandName.equals("echo")){ // if the command is echo
+                Terminal terminal = new Terminal();
+                terminal.echo(arguments);
+            }
+            else{
+                System.out.println("Invalid command");
+            }
+        }
+        else{
+            System.out.println("Invalid command");
+        }
+    }
     public static void main(String[] args){
         while(true){
-            System.out.print(">> ");
+            System.out.print("> ");
             Scanner scanner = new Scanner(System.in);
             String input = scanner.nextLine();
             if(input.equals("exit")){ // if the user enters exit, then exit the program
                 break;
             }
-            Parser parser = new Parser();
-            if(parser.parse(input)){ // if the command is valid
-                String commandName = parser.getCommandName();
-                String[] arguments = parser.getArgs();
-                if(commandName.equals("echo")){ // if the command is echo
-                    Terminal terminal = new Terminal();
-                    terminal.echo(arguments);
-                }
-                else{
-                    System.out.println("Invalid command");
-                }
-            }
-            else{
-                System.out.println("Invalid command");
-            }
+            chooseCommandAction(input);
         }
 
     }
