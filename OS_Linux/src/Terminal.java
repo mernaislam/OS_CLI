@@ -1,4 +1,4 @@
-package OS_Linux.src;
+package OS_Linux.src;//package OS_Linux.src;//package OS_Linux.src;
 
 import java.util.Scanner;
 import java.io.IOException;
@@ -36,26 +36,82 @@ class Parser{
 }
 
 public class Terminal{
-    public void echo(String[] args){
+    public String[] echo(String[] args){
         for(int i=0;i<args.length;i++){
             System.out.print(args[i]+" ");
         }
         System.out.println();
+        return args;
     }
-    public void pwd(){
+    public String pwd(String ... args){
         String path = System.getProperty("user.dir"); // get the current working directory
         System.out.println(path);
+        return path;
         // The pwd method uses the **System.getProperty("user.dir")** method to get the current working directory and prints it
     }
     public void mkdir(String[] args) throws IOException {
         // The mkdir method creates a new directory with the name given in the argument
         // For example, if the command is "mkdir newFolder", then a new folder with the name "newFolder" should be created in the current working directory
         for(int i=0;i<args.length;i++){
-           // get the path of the new directory
-            String path = System.getProperty("user.dir")+"/"+args[i];
-            // create a new directory in the path
-            java.nio.file.Files.createDirectory(java.nio.file.Paths.get(path));
+           // a path is given
+            if(args[i].contains("\\")){
+                String path = args[i];
+                // add directory to the path
+                java.nio.file.Files.createDirectory(java.nio.file.Paths.get(path));
+
+            }
+            else{
+                String path = System.getProperty("user.dir")+"/"+args[i];
+                java.io.File file = new java.io.File(path);
+                if(!file.exists()){
+                    file.mkdir();
+                }
+            }
         }
+    }
+    // > command > file.txt
+    public void redirect(String[] args){
+        String command = args[0];
+        String file_name  = args[args.length-1];
+        String[] command_args = new String[args.length-2];
+        if(command.equals("echo")){
+            for(int i=1;i<args.length-1;i++){
+                command_args[i-1] = args[i];
+            }
+            String[] output = echo(command_args);
+            // write the output to the file
+            java.io.File file = new java.io.File(file_name);
+            try{
+                java.io.PrintWriter output_file = new java.io.PrintWriter(file);
+                for(int i=0;i<output.length;i++){
+                    output_file.print(output[i]+" ");
+                }
+                output_file.close();
+            }
+            catch(IOException e){
+                System.out.println("Error: "+e.getMessage());
+            }
+        }
+        else if(command.equals("pwd")){
+            String path = pwd();
+            java.io.File file = new java.io.File(file_name);
+            try{
+                java.io.PrintWriter output_file = new java.io.PrintWriter(file);
+                output_file.print(path);
+                output_file.close();
+            }
+            catch(IOException e){
+                System.out.println("Error: "+e.getMessage());
+            }
+        }
+    }
+    public void cd(String[] args){
+        // The cd method changes the current working directory to the directory given in the argument
+        // For example, if the command is "cd newFolder", then the current working directory should be changed to the directory "newFolder"
+        String newDir = args[0];
+        String path = System.getProperty("user.dir")+"/"+newDir;
+        System.setProperty("user.dir",path);
+
     }
     public static void main(String[] args){
         Terminal terminal = new Terminal();
