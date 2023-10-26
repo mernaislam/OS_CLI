@@ -1,6 +1,7 @@
 package OS_Linux.src;
 
 import java.util.Scanner;
+import java.io.IOException;
 
 
 class Parser{
@@ -46,6 +47,16 @@ public class Terminal{
         System.out.println(path);
         // The pwd method uses the **System.getProperty("user.dir")** method to get the current working directory and prints it
     }
+    public void mkdir(String[] args) throws IOException {
+        // The mkdir method creates a new directory with the name given in the argument
+        // For example, if the command is "mkdir newFolder", then a new folder with the name "newFolder" should be created in the current working directory
+        for(int i=0;i<args.length;i++){
+           // get the path of the new directory
+            String path = System.getProperty("user.dir")+"/"+args[i];
+            // create a new directory in the path
+            java.nio.file.Files.createDirectory(java.nio.file.Paths.get(path));
+        }
+    }
     public static void main(String[] args){
         Terminal terminal = new Terminal();
         Scanner scanner = new Scanner(System.in);
@@ -64,6 +75,14 @@ public class Terminal{
                 }
                 else if(commandName.equals("pwd")){
                     terminal.pwd();
+                }
+                else if(commandName.equals("mkdir")){
+                    try{
+                        terminal.mkdir(arguments);
+                    }
+                    catch(IOException e){
+                        System.out.println("Error: "+e.getMessage());
+                    }
                 }
                 else{
                     System.out.println("Invalid command");
