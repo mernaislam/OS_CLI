@@ -2,6 +2,7 @@ package OS_Linux.src;
 
 import java.util.Scanner;
 
+
 class Parser{
     String commandName;
     String[] args;
@@ -34,20 +35,22 @@ class Parser{
 }
 
 public class Terminal{
-    Parser parser;
-    public Terminal(){
-        parser = new Parser();
-    }
-    public void echo(String[] args){ // echo command in linux prints the arguments
+    public void echo(String[] args){
         for(int i=0;i<args.length;i++){
-            System.out.print(args[i]+" "); //print the arguments
+            System.out.print(args[i]+" ");
         }
         System.out.println();
     }
+    public void pwd(){
+        String path = System.getProperty("user.dir"); // get the current working directory
+        System.out.println(path);
+        // The pwd method uses the **System.getProperty("user.dir")** method to get the current working directory and prints it
+    }
     public static void main(String[] args){
+        Terminal terminal = new Terminal();
+        Scanner scanner = new Scanner(System.in);
         while(true){
             System.out.print(">> ");
-            Scanner scanner = new Scanner(System.in);
             String input = scanner.nextLine();
             if(input.equals("exit")){ // if the user enters exit, then exit the program
                 break;
@@ -56,9 +59,11 @@ public class Terminal{
             if(parser.parse(input)){ // if the command is valid
                 String commandName = parser.getCommandName();
                 String[] arguments = parser.getArgs();
-                if(commandName.equals("echo")){ // if the command is echo
-                    Terminal terminal = new Terminal();
+                if(commandName.equals("echo")){
                     terminal.echo(arguments);
+                }
+                else if(commandName.equals("pwd")){
+                    terminal.pwd();
                 }
                 else{
                     System.out.println("Invalid command");
@@ -68,7 +73,6 @@ public class Terminal{
                 System.out.println("Invalid command");
             }
         }
-
     }
 
 }
