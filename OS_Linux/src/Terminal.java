@@ -16,6 +16,7 @@ class Parser{
         args = new String[0];
         if(input.contains(" ")){ // if the command contains space
             String[] temp = input.split(" "); // split the command by space
+            // split returns an array of strings , where each string is a word in the command
             commandName = temp[0]; // the first word is the command name
             args = new String[temp.length-1]; // the remaining words are the arguments
             for(int i=1;i<temp.length;i++){
@@ -30,7 +31,6 @@ class Parser{
     public String[] getArgs(){ //returns the arguments
         return args;
     }
-
 }
 
 public class Terminal{
