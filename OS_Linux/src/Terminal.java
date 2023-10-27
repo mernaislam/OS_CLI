@@ -53,6 +53,20 @@ public class Terminal{
             redirect(content,fileName);
             return;
         }
+        else if(Arrays.asList(args).contains(">>")){
+            // get the index of >>
+            int index = Arrays.asList(args).indexOf(">>");
+            // get the content before >>
+            String content = "";
+            for(int i=0;i<index;i++){
+                content += args[i]+" ";
+            }
+            // get the file name after >>
+            String fileName = args[index+1];
+            // append the content to the file
+            append(content,fileName);
+            return;
+        }
         for(int i=0;i<args.length;i++){
             System.out.print(args[i]+" ");
         }
@@ -66,6 +80,13 @@ public class Terminal{
             redirect(path,fileName);
             return;
         }
+        else if(Arrays.asList(args).contains(">>")){
+            int index = Arrays.asList(args).indexOf(">>");
+            String fileName = args[index+1];
+            String path = System.getProperty("user.dir");
+            append(path,fileName);
+            return;
+        }
         String path = System.getProperty("user.dir"); // get the current working directory
         System.out.println(path);
         // The pwd method uses the **System.getProperty("user.dir")** method to get the current working directory and prints it
@@ -77,15 +98,22 @@ public class Terminal{
            // a path is given
             if(args[i].contains("\\")){
                 String path = args[i];
-                // add directory to the path
-                java.nio.file.Files.createDirectory(java.nio.file.Paths.get(path));
-
+                try{
+                    // create the directory
+                    java.nio.file.Files.createDirectory(java.nio.file.Paths.get(path));
+                }
+                catch(IOException e){
+                    System.out.println("Error: "+e.getMessage());
+                }
             }
             else{
-                String path = System.getProperty("user.dir")+"/"+args[i];
-                java.io.File file = new java.io.File(path);
-                if(!file.exists()){
-                    file.mkdir();
+              try{
+                    // add directory to the current working directory
+                    String path = System.getProperty("user.dir")+"/"+args[i];
+                    java.nio.file.Files.createDirectory(java.nio.file.Paths.get(path));
+              }
+                catch(IOException e){
+                    System.out.println("Error: "+e.getMessage());
                 }
             }
         }
@@ -107,13 +135,22 @@ public class Terminal{
             System.out.println("Error: "+e.getMessage());
         }
     }
-    public void cd(String[] args){
-        // The cd method changes the current working directory to the directory given in the argument
-        // For example, if the command is "cd newFolder", then the current working directory should be changed to the directory "newFolder"
-        String newDir = args[0];
-        String path = System.getProperty("user.dir")+"/"+newDir;
-        System.setProperty("user.dir",path);
+    public void append(String content , String fileName){
+        java.io.File file = new java.io.File(fileName);
+        try{
+            // split the content by space
+            String[] temp = content.split(" ");
+            // append the content to the file
+            java.io.PrintWriter output = new java.io.PrintWriter(new java.io.FileWriter(file,true));
+            for(int i=0;i<temp.length;i++){
+                output.print(temp[i]+" ");
+            }
+            output.close();
 
+        }
+        catch(IOException e){
+            System.out.println("Error: "+e.getMessage());
+        }
     }
     public static void main(String[] args){
         Terminal terminal = new Terminal();
