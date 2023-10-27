@@ -1,5 +1,6 @@
 package OS_Linux.src;//package OS_Linux.src;//package OS_Linux.src;
 
+import java.util.Arrays;
 import java.util.Scanner;
 import java.io.IOException;
 
@@ -36,17 +37,37 @@ class Parser{
 }
 
 public class Terminal{
-    public String[] echo(String[] args){
+    public void echo(String[] args){
+        // if (>) is in arguments
+        if(Arrays.asList(args).contains(">")){
+            // get the index of >
+            int index = Arrays.asList(args).indexOf(">");
+            // get the content before >
+            String content = "";
+            for(int i=0;i<index;i++){
+                content += args[i]+" ";
+            }
+            // get the file name after >
+            String fileName = args[index+1];
+            // redirect the content to the file
+            redirect(content,fileName);
+            return;
+        }
         for(int i=0;i<args.length;i++){
             System.out.print(args[i]+" ");
         }
         System.out.println();
-        return args;
     }
-    public String pwd(String ... args){
+    public void pwd(String[] args){
+        if(Arrays.asList(args).contains('>')){
+            int index = Arrays.asList(args).indexOf(">");
+            String fileName = args[index+1];
+            String path = System.getProperty("user.dir");
+            redirect(path,fileName);
+            return;
+        }
         String path = System.getProperty("user.dir"); // get the current working directory
         System.out.println(path);
-        return path;
         // The pwd method uses the **System.getProperty("user.dir")** method to get the current working directory and prints it
     }
     public void mkdir(String[] args) throws IOException {
@@ -69,40 +90,21 @@ public class Terminal{
             }
         }
     }
-    // > command > file.txt
-    public void redirect(String[] args){
-        String command = args[0];
-        String file_name  = args[args.length-1];
-        String[] command_args = new String[args.length-2];
-        if(command.equals("echo")){
-            for(int i=1;i<args.length-1;i++){
-                command_args[i-1] = args[i];
+    public void redirect(String content , String fileName){
+        java.io.File file = new java.io.File(fileName);
+        try{
+           // split the content by space
+            String[] temp = content.split(" ");
+            // write the content to the file
+            java.io.PrintWriter output = new java.io.PrintWriter(file);
+            for(int i=0;i<temp.length;i++){
+                output.print(temp[i]+" ");
             }
-            String[] output = echo(command_args);
-            // write the output to the file
-            java.io.File file = new java.io.File(file_name);
-            try{
-                java.io.PrintWriter output_file = new java.io.PrintWriter(file);
-                for(int i=0;i<output.length;i++){
-                    output_file.print(output[i]+" ");
-                }
-                output_file.close();
-            }
-            catch(IOException e){
-                System.out.println("Error: "+e.getMessage());
-            }
+            output.close();
+
         }
-        else if(command.equals("pwd")){
-            String path = pwd();
-            java.io.File file = new java.io.File(file_name);
-            try{
-                java.io.PrintWriter output_file = new java.io.PrintWriter(file);
-                output_file.print(path);
-                output_file.close();
-            }
-            catch(IOException e){
-                System.out.println("Error: "+e.getMessage());
-            }
+        catch(IOException e){
+            System.out.println("Error: "+e.getMessage());
         }
     }
     public void cd(String[] args){
@@ -130,7 +132,7 @@ public class Terminal{
                     terminal.echo(arguments);
                 }
                 else if(commandName.equals("pwd")){
-                    terminal.pwd();
+                    terminal.pwd(arguments);
                 }
                 else if(commandName.equals("mkdir")){
                     try{
