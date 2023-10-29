@@ -1,8 +1,11 @@
 package OS_Linux.src;//package OS_Linux.src;//package OS_Linux.src;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Scanner;
-import java.io.IOException;
+
 
 
 class Parser{
@@ -91,29 +94,23 @@ public class Terminal{
         System.out.println(path);
         // The pwd method uses the **System.getProperty("user.dir")** method to get the current working directory and prints it
     }
-    public void mkdir(String[] args) throws IOException {
+    public void mkdir(String[] args) {
         // The mkdir method creates a new directory with the name given in the argument
         // For example, if the command is "mkdir newFolder", then a new folder with the name "newFolder" should be created in the current working directory
         for(int i=0;i<args.length;i++){
            // a path is given
-            if(args[i].contains("\\")){
+            if(args[i].contains("\\") || args[i].contains("/")){
                 String path = args[i];
-                try{
-                    // create the directory
-                    java.nio.file.Files.createDirectory(java.nio.file.Paths.get(path));
-                }
-                catch(IOException e){
-                    System.out.println("Error: "+e.getMessage());
+                File file = new File(path);
+                if(!file.mkdir()){
+                    System.out.println("Error: Directory not created");
                 }
             }
             else{
-              try{
-                    // add directory to the current working directory
-                    String path = System.getProperty("user.dir")+"/"+args[i];
-                    java.nio.file.Files.createDirectory(java.nio.file.Paths.get(path));
-              }
-                catch(IOException e){
-                    System.out.println("Error: "+e.getMessage());
+                String path = System.getProperty("user.dir")+"\\"+args[i];
+                File file = new File(path);
+                if(!file.mkdir()){
+                    System.out.println("Error: Directory not created");
                 }
             }
         }
@@ -124,7 +121,7 @@ public class Terminal{
            // split the content by space
             String[] temp = content.split(" ");
             // write the content to the file
-            java.io.PrintWriter output = new java.io.PrintWriter(file);
+            java.io.PrintWriter output = new java.io.PrintWriter(file); // create a new file
             for(int i=0;i<temp.length;i++){
                 output.print(temp[i]+" ");
             }
@@ -172,12 +169,7 @@ public class Terminal{
                     terminal.pwd(arguments);
                 }
                 else if(commandName.equals("mkdir")){
-                    try{
-                        terminal.mkdir(arguments);
-                    }
-                    catch(IOException e){
-                        System.out.println("Error: "+e.getMessage());
-                    }
+                    terminal.mkdir(arguments);
                 }
                 else{
                     System.out.println("Invalid command");
