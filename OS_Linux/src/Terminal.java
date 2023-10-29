@@ -1,6 +1,10 @@
 //package OS_Linux.src;
 
 import java.util.Scanner;
+import java.io.File;
+import java.io.FileFilter;
+import java.io.IOException;
+import java.util.Arrays;
 
 class Parser{
     String commandName;
@@ -8,19 +12,25 @@ class Parser{
     //This method will divide the input into commandName and args
     //where "input" is the string command entered by the user
     public boolean parse(String input){ //returns true if the command is valid
-     // input is the command
-        commandName = input;
-        // args should be the arguments of the command
-        // for example, if the command is "echo hello world", then commandName = "echo" and args = ["hello", "world"]
-        // if the command is "pwd", then commandName = "pwd" and args = []
+        // Split the input by spaces
+        String[] temp = input.split(" ");
+
+        // The first part is the command name
+        commandName = temp[0];
+
+        // Initialize arguments
         args = new String[0];
-        if(input.contains(" ")){ // if the command contains space
-            String[] temp = input.split(" "); // split the command by space
-            commandName = temp[0]; // the first word is the command name
-            args = new String[temp.length-1]; // the remaining words are the arguments
-            for(int i = 1; i < temp.length; i++){
-                args[i-1] = temp[i];
-            }
+
+        //check if the command includes a space followed by "-"
+        if (temp.length > 1 && temp[1].startsWith("-")) {
+            // Add the second part to the command name
+            commandName += " " + temp[1];
+
+            // The remaining parts are arguments
+            args = Arrays.copyOfRange(temp, 2, temp.length);
+        } else if (temp.length > 1) {
+            // The remaining parts are arguments
+            args = Arrays.copyOfRange(temp, 1, temp.length);
         }
         return true;
     }
@@ -49,18 +59,32 @@ public class Terminal{
         }
         System.out.println();
     }
+    public void lsR(){
+        String currentDir = System.getProperty("user.dir");
+        File[] files = new File(currentDir).listFiles(file -> !file.isHidden());
+
+        if(files != null){
+            //comparing the names of the files in reverse order
+            //using a custom comparator for sorting
+            Arrays.sort(files, (f1, f2) -> f2.getName().compareTo(f1.getName()));
+            for(File f : files){
+                System.out.print(f.getName() + " ");
+            }
+        }
+        else {
+            System.out.println("Failed to list directory contents.");
+        }
+    }
     //This method will choose the suitable command method to be called
-    public static void chooseCommandAction(String input){
+    public void chooseCommandAction(String input){
         Parser parser = new Parser();
         if(parser.parse(input)){ // if the command is valid
             String commandName = parser.getCommandName();
             String[] arguments = parser.getArgs();
-            if(commandName.equals("echo")){ // if the command is echo
-                Terminal terminal = new Terminal();
-                terminal.echo(arguments);
-            }
-            else{
-                System.out.println("Invalid command");
+            switch (commandName){
+                case "echo" : echo(arguments);
+                case "ls -r" : lsR();
+                default : System.out.println("Invalid command");
             }
         }
         else{
@@ -68,6 +92,7 @@ public class Terminal{
         }
     }
     public static void main(String[] args){
+        Terminal terminal = new Terminal();
         while(true){
             System.out.print("> ");
             Scanner scanner = new Scanner(System.in);
@@ -75,7 +100,7 @@ public class Terminal{
             if(input.equals("exit")){ // if the user enters exit, then exit the program
                 break;
             }
-            chooseCommandAction(input);
+            terminal.chooseCommandAction(input);
         }
 
     }
