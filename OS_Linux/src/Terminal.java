@@ -2,6 +2,7 @@ package OS_Linux.src;//package OS_Linux.src;//package OS_Linux.src;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Scanner;
@@ -98,7 +99,6 @@ public class Terminal{
         // The mkdir method creates a new directory with the name given in the argument
         // For example, if the command is "mkdir newFolder", then a new folder with the name "newFolder" should be created in the current working directory
         for(int i=0;i<args.length;i++){
-           // a path is given
             if(args[i].contains("\\") || args[i].contains("/")){
                 String path = args[i];
                 File file = new File(path);
@@ -116,34 +116,32 @@ public class Terminal{
         }
     }
     public void redirect(String content , String fileName){
-        java.io.File file = new java.io.File(fileName);
         try{
            // split the content by space
             String[] temp = content.split(" ");
             // write the content to the file
-            java.io.PrintWriter output = new java.io.PrintWriter(file); // create a new file
+            File file1 = new File(fileName);
+            FileWriter fr = new FileWriter(file1);
             for(int i=0;i<temp.length;i++){
-                output.print(temp[i]+" ");
+                fr.write(temp[i]+" ");
             }
-            output.close();
-
+            fr.close();
         }
         catch(IOException e){
             System.out.println("Error: "+e.getMessage());
         }
     }
     public void append(String content , String fileName){
-        java.io.File file = new java.io.File(fileName);
         try{
             // split the content by space
             String[] temp = content.split(" ");
             // append the content to the file
-            java.io.PrintWriter output = new java.io.PrintWriter(new java.io.FileWriter(file,true));
+            File file1 = new File(fileName);
+            FileWriter fr = new FileWriter(file1,true);
             for(int i=0;i<temp.length;i++){
-                output.print(temp[i]+" ");
+                fr.write(temp[i]+" ");
             }
-            output.close();
-
+            fr.close();
         }
         catch(IOException e){
             System.out.println("Error: "+e.getMessage());
