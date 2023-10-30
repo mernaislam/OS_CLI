@@ -120,7 +120,43 @@ public class Terminal{
             System.err.println("Error: File '" + fileName + "' does not exist in the current directory.");
         }
     }
+    public void cat(String... fileNames) {
+        if (fileNames.length == 1) {
+            String fileName = fileNames[0];
+            try {
+                String currentDir = System.getProperty("user.dir");
+                File file = new File(currentDir, fileName);
 
+                if (file.exists()) {
+                    String content = new String(Files.readAllBytes(file.toPath()));
+                    System.out.println(content);
+                } else {
+                    System.err.println("Error: File '" + fileName + "' does not exist in the current directory.");
+                }
+            } catch (IOException e) {
+                System.err.println("Error: " + e.getMessage());
+            }
+        } else {
+            String fileName1 = fileNames[0];
+            String fileName2 = fileNames[1];
+
+            try {
+                String currentDir = System.getProperty("user.dir");
+                File file1 = new File(currentDir, fileName1);
+                File file2 = new File(currentDir, fileName2);
+
+                if (file1.exists() && file2.exists()) {
+                    String content1 = new String(Files.readAllBytes(file1.toPath()));
+                    String content2 = new String(Files.readAllBytes(file2.toPath()));
+                    System.out.println(content1 + content2);
+                } else {
+                    System.err.println("Error: One or both of the specified files do not exist in the current directory.");
+                }
+            } catch (IOException e) {
+                System.err.println("Error: " + e.getMessage());
+            }
+        }
+    }
 
     //This method will choose the suitable command method to be called
     public void chooseCommandAction(String input){
@@ -143,6 +179,15 @@ public class Terminal{
                         rm(arguments[0]);
                     } else {
                         System.err.println("Expected: rm <file>");
+                    }
+                }
+                case "cat" -> {
+                    if (arguments.length == 1) {
+                        cat(arguments[0]);
+                    } else if (arguments.length == 2) {
+                        cat(arguments[0], arguments[1]);
+                    } else {
+                        System.err.println("Expected: cat <file> or cat <file1> <file2>");
                     }
                 }
                 default -> System.out.println("Invalid command");
