@@ -94,6 +94,21 @@ public class Terminal{
             System.err.println("Error: Source file does not exist.");
         }
     }
+    public void rm(String fileName) {
+        String currentDir = System.getProperty("user.dir");
+        File file = new File(currentDir, fileName);
+
+        if (file.exists()) {
+            if (file.delete()) {
+                System.out.println("File '" + fileName + "' removed successfully.");
+            } else {
+                System.err.println("Error: Failed to remove file '" + fileName + "'.");
+            }
+        } else {
+            System.err.println("Error: File '" + fileName + "' does not exist in the current directory.");
+        }
+    }
+
 
     //This method will choose the suitable command method to be called
     public void chooseCommandAction(String input){
@@ -109,6 +124,13 @@ public class Terminal{
                         cp(arguments[0], arguments[1]);
                     } else {
                         System.err.println("Expected: cp <source> <destination>");
+                    }
+                }
+                case "rm" -> {
+                    if (arguments.length == 1) {
+                        rm(arguments[0]);
+                    } else {
+                        System.err.println("Expected: rm <file>");
                     }
                 }
                 default -> System.out.println("Invalid command");
