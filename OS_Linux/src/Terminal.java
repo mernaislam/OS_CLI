@@ -81,6 +81,18 @@ public class Terminal{
         File sourceFile = new File(sourcePath);
         File destinationFile = new File(destinationPath);
 
+        if (!sourceFile.isAbsolute()) {
+            // If sourceFile is relative to the current directory
+            String currentDir = System.getProperty("user.dir");
+            sourceFile = new File(currentDir, sourcePath);
+        }
+
+        if (!destinationFile.isAbsolute()) {
+            // If destinationFile is relative to the current directory
+            String currentDir = System.getProperty("user.dir");
+            destinationFile = new File(currentDir, destinationPath);
+        }
+
         if (sourceFile.exists()) {
             try {
                 //convert file object to path to use it with Files.copy() method
