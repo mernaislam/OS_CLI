@@ -2,9 +2,11 @@
 
 import java.util.Scanner;
 import java.io.File;
+import java.nio.file.Files;
 import java.io.FileFilter;
 import java.io.IOException;
 import java.util.Arrays;
+import java.nio.file.StandardCopyOption;
 
 class Parser{
     String commandName;
@@ -75,6 +77,24 @@ public class Terminal{
             System.out.println("Failed to list directory contents.");
         }
     }
+    public void cp(String sourcePath, String destinationPath) {
+        File sourceFile = new File(sourcePath);
+        File destinationFile = new File(destinationPath);
+
+        if (sourceFile.exists()) {
+            try {
+                //convert file object to path to use it with Files.copy() method
+                //handle the case if the destination file already exists
+                Files.copy(sourceFile.toPath(), destinationFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+                System.out.println("File copied successfully.");
+            } catch (IOException e) {
+                System.err.println("Error: " + e.getMessage());
+            }
+        } else {
+            System.err.println("Error: Source file does not exist.");
+        }
+    }
+
     //This method will choose the suitable command method to be called
     public void chooseCommandAction(String input){
         Parser parser = new Parser();
@@ -82,9 +102,16 @@ public class Terminal{
             String commandName = parser.getCommandName();
             String[] arguments = parser.getArgs();
             switch (commandName){
-                case "echo" : echo(arguments);
-                case "ls -r" : lsR();
-                default : System.out.println("Invalid command");
+                case "echo" -> echo(arguments);
+                case "ls -r" -> lsR();
+                case "cp" -> {
+                    if (arguments.length == 2) {
+                        cp(arguments[0], arguments[1]);
+                    } else {
+                        System.err.println("Expected: cp <source> <destination>");
+                    }
+                }
+                default -> System.out.println("Invalid command");
             }
         }
         else{
