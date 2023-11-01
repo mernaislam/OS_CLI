@@ -61,31 +61,46 @@ public class Terminal{
 
     public void touch(String filePath)
     {
-
-        File newFile = new File(filePath);
+        String newPath = System.getProperty("user.dir");
         try
         {
-            if (!newFile.createNewFile())
-            {
-                System.out.println("File already exists ");
+            File relativePath = new File(newPath);
+            if(relativePath.exists()){
+                File relativePathFile = new File(newPath + "/" + filePath);
+                if (!relativePathFile.createNewFile())
+                {
+                    System.out.println("File already exists ");
+                }
+            } else {
+                File absolutePath = new File(filePath);
+                if (!absolutePath.createNewFile())
+                {
+                    System.out.println("File already exists ");
+                }
             }
         }
         catch (IOException e)
         {
-            System.out.println("An error occurred while creating the file: " + e.getMessage());
+            System.out.println(e.getMessage());
         }
     }
-    public void cd(String arg)
+    public void cd(String[] arg)
     {
         String newDirectory;
+        // if more than one argument is given
+        if(arg.length > 1)
+        {
+            System.out.println("Error: command must have zero or one argument with no space");
+            return;
+        }
         // if no args were given
-        if(arg.isEmpty())
+        if(arg.length == 0)
         {
             newDirectory = System.getProperty("user.home");
             System.setProperty("user.dir", newDirectory);
         }
         // get the parent directory in case cd ..
-        else if(arg.equals(".."))
+        else if(arg[0].equals(".."))
         {
             String currentDirectory = System.getProperty("user.dir");
             File file = new File(currentDirectory);
@@ -95,9 +110,9 @@ public class Terminal{
         // change directory to the given absolute/relative path
         else
         {
-            String newPath = System.getProperty("user.dir") +  "/" + arg;
+            String newPath = System.getProperty("user.dir") +  "/" + arg[0];
             File relativePath = new File(newPath);
-            File absolutePath = new File(arg);
+            File absolutePath = new File(arg[0]);
             // checks whether the given path can be relative or absolute
             if(relativePath.exists())
             {
@@ -105,7 +120,7 @@ public class Terminal{
             }
             else if(absolutePath.exists())
             {
-                System.setProperty("user.dir", arg);
+                System.setProperty("user.dir", arg[0]);
             }
             else
             {
@@ -147,8 +162,28 @@ public class Terminal{
         }
         else
         {
+            String currDir = System.getProperty("user.dir");
+            File relativeCurrDir = new File(currDir + "/" + args);
             File currentDir = new File(args);
-            if(currentDir.exists())
+            if(relativeCurrDir.exists()){
+                if(relativeCurrDir.isDirectory())
+                {
+                    File[] files = relativeCurrDir.listFiles();
+                    if(files == null || files.length == 0)
+                    {
+                        relativeCurrDir.delete();
+                    }
+                    else
+                    {
+                        System.out.println(args + " is not empty!");
+                    }
+                }
+                else
+                {
+                    System.out.println(args + " is not a directory!");
+                }
+            }
+            else if(currentDir.exists())
             {
                 if(currentDir.isDirectory())
                 {
@@ -161,6 +196,10 @@ public class Terminal{
                     {
                         System.out.println(args + " is not empty!");
                     }
+                }
+                else
+                {
+                    System.out.println(args + " is not a directory!");
                 }
             }
             else
@@ -191,8 +230,7 @@ public class Terminal{
                 }
                 case "cd" ->
                 {
-                    if(arguments.length == 1) cd(arguments[0]);
-                    else System.out.println("Error: command must have only one argument with no space");
+                    cd(arguments);
                 }
                 case "rmdir" ->
                 {
