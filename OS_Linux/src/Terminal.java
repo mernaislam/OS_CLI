@@ -93,6 +93,7 @@ public class Terminal{
     public void touch(String filePath)
     {
 
+
         String newPath = System.getProperty("user.dir");
         try
         {
@@ -313,6 +314,10 @@ public class Terminal{
     public void mkdir(String[] args) {
         // The mkdir method creates a new directory with the name given in the argument
         // For example, if the command is "mkdir newFolder", then a new folder with the name "newFolder" should be created in the current working directory
+        if(args.length == 0){
+            System.out.println("Error: missing file operand");
+            return;
+        }
         for(int i=0;i<args.length;i++){
             if(args[i].contains("\\") || args[i].contains("/")){
                 String path = args[i];
