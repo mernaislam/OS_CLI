@@ -334,13 +334,15 @@ public class Terminal{
         try{
             // split the content by space
             String[] temp = content.split(" ");
-            // write the content to the file
-            File file1 = new File(fileName);
-            FileWriter fr = new FileWriter(file1);
-            for(int i=0;i<temp.length;i++){
-                fr.write(temp[i]+" ");
-            }
-            fr.close();
+            // write the content to the file\
+            String path = System.getProperty("user.dir")+"\\"+fileName;
+                File file = new File(path);
+                FileWriter fr = new FileWriter(file);
+                for(int i=0;i<temp.length;i++){
+                    fr.write(temp[i]+" ");
+                }
+                fr.close();
+
         }
         catch(IOException e){
             System.out.println("Error: "+e.getMessage());
@@ -351,7 +353,8 @@ public class Terminal{
             // split the content by space
             String[] temp = content.split(" ");
             // append the content to the file
-            File file1 = new File(fileName);
+            String path = System.getProperty("user.dir")+"\\"+fileName;
+            File file1 = new File(path);
             FileWriter fr = new FileWriter(file1,true);
             for(int i=0;i<temp.length;i++){
                 fr.write(temp[i]+" ");
@@ -439,18 +442,16 @@ public class Terminal{
     public void rm(String fileName) {
         String currentDir = System.getProperty("user.dir");
         File file = new File(currentDir, fileName);
-
         if (file.exists()) {
-            if (file.delete()) {
-                System.out.println("File '" + fileName + "' removed successfully.");
-            } else {
-                System.err.println("Error: Failed to remove file '" + fileName + "'.");
-            }
-        } else {
+           if(!file.delete()){
+               System.out.println("Error: File not deleted");
+           }
+        }
+        else {
             System.err.println("Error: File '" + fileName + "' does not exist in the current directory.");
         }
     }
-    public void cat(String... fileNames) {
+    public void cat(String[]fileNames) {
         if (fileNames.length == 1) {
             String fileName = fileNames[0];
             try {
@@ -466,10 +467,9 @@ public class Terminal{
             } catch (IOException e) {
                 System.err.println("Error: " + e.getMessage());
             }
-        } else {
+        } else if(fileNames.length == 2){
             String fileName1 = fileNames[0];
             String fileName2 = fileNames[1];
-
             try {
                 String currentDir = System.getProperty("user.dir");
                 File file1 = new File(currentDir, fileName1);
@@ -485,6 +485,9 @@ public class Terminal{
             } catch (IOException e) {
                 System.err.println("Error: " + e.getMessage());
             }
+        }
+        else{
+            System.out.println("Error: command must have only one or two arguments with no space");
         }
     }
 
