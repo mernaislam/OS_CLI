@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Objects;
 import java.util.Scanner;
 
@@ -91,6 +92,7 @@ public class Terminal{
 
     public void touch(String filePath)
     {
+
         String newPath = System.getProperty("user.dir");
         try
         {
@@ -365,7 +367,7 @@ public class Terminal{
         File[] files = new File(currentDir).listFiles(file -> !file.isHidden());
 
         if(files != null){
-            Arrays.sort(files, (f1, f2) -> f2.getName().compareTo(f1.getName()));
+            Arrays.sort(files, Collections.reverseOrder());
             //comparing the names of the files in reverse order
             //using a custom comparator for sorting
             if(Arrays.asList(arg).contains('>')){
@@ -399,6 +401,7 @@ public class Terminal{
             for(File f : files){
                 System.out.print(f.getName() + " ");
             }
+            System.out.println();
         }
         else {
             System.out.println("Failed to list directory contents.");
