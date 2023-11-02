@@ -431,7 +431,6 @@ public class Terminal{
                 //convert file object to path to use it with Files.copy() method
                 //handle the case if the destination file already exists
                 Files.copy(sourceFile.toPath(), destinationFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
-                System.out.println("File copied successfully.");
             } catch (IOException e) {
                 System.err.println("Error: " + e.getMessage());
             }
