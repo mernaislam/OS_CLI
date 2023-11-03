@@ -47,14 +47,14 @@ public class Terminal{
         File[] files = new File(currentPath).listFiles(file -> !file.isHidden());
         if(files != null)
         {
-            if(Arrays.asList(arg).contains('>')){
+            if(Arrays.asList(arg).contains(">")){
                 String content = "";
                 Arrays.sort(files);
                 for (File file: files)
                 {
                     content += file.getName() + " ";
                 }
-                int index = Arrays.asList(arg).indexOf('>');
+                int index = Arrays.asList(arg).indexOf(">");
                 if(index == arg.length - 1){
                     System.out.println("Error: missing file path");
                     return;
@@ -285,7 +285,7 @@ public class Terminal{
         System.out.println();
     }
     public void pwd(String[] args){
-        if(Arrays.asList(args).contains('>')){
+        if(Arrays.asList(args).contains(">")){
             int index = Arrays.asList(args).indexOf(">");
             if(index == args.length - 1){
                 System.out.println("Error: missing file path");
@@ -378,7 +378,7 @@ public class Terminal{
             Arrays.sort(files, Collections.reverseOrder());
             //comparing the names of the files in reverse order
             //using a custom comparator for sorting
-            if(Arrays.asList(arg).contains('>')){
+            if(Arrays.asList(arg).contains(">")){
                 int index = Arrays.asList(arg).indexOf(">");
                 if(index == arg.length - 1){
                     System.out.println("Error: missing file path");
